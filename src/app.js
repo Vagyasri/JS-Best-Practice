@@ -134,6 +134,7 @@ const deleteAllDone = () => {
           i += 1;
         }
         save();
+        window.location.reload();
       }
     });
   }
