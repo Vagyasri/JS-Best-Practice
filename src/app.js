@@ -1,6 +1,20 @@
+/* eslint-disable no-loop-func */
 import './style.css';
-import { status, todoList, save } from './status.js';
-import { createList, deleteList, deleteAllDone } from './crud.js';
+
+const LIST_KEY = 'task.list';
+let todoList = JSON.parse(localStorage.getItem(LIST_KEY)) || [];
+
+const save = () => {
+  localStorage.setItem(LIST_KEY, JSON.stringify(todoList));
+};
+
+const status = (checkbox, task) => {
+  if (checkbox.checked) {
+    task.completed = true;
+  } else {
+    task.completed = false;
+  }
+};
 
 const container = document.querySelector('.list-container');
 const newList = document.querySelector('.new-data');
@@ -51,6 +65,7 @@ const render = () => {
     icon.classList.add('show-more');
     dlt.classList.add('fas');
     dlt.classList.add('fa-trash-alt');
+    dlt.setAttribute('data-index', todo.index);
 
     listElement.appendChild(input);
     listElement.appendChild(span);
@@ -74,6 +89,54 @@ render();
 const saveAndRender = () => {
   save();
   render();
+};
+
+const createList = (task) => (
+  {
+    index: todoList.length,
+    description: task,
+    completed: false,
+  });
+
+const removeLocal = (index) => {
+  todoList = todoList.filter((task) => task.index !== index);
+  save();
+  window.location.reload();
+};
+
+const deleteList = (e) => {
+  const deleteButton = e.target;
+  if (deleteButton.classList[1] === 'fa-trash-alt') {
+    const indexToDelete = Number(deleteButton.getAttribute('data-index'));
+    removeLocal(indexToDelete);
+  }
+};
+
+const deleteAllDone = () => {
+  const completed = document.querySelectorAll('.check');
+  completed.forEach((checkbox) => {
+    if (checkbox.checked) {
+      checkbox.parentElement.parentElement.remove();
+    }
+  });
+  for (let i = 0; i < todoList.length; i += 1) {
+    // eslint-disable-next-line array-callback-return
+    todoList.filter((task) => {
+      if (task.completed) {
+        const index = todoList.indexOf(task);
+        todoList.splice(index, 1);
+        let i = 0;
+        while (i < todoList.length) {
+          if (todoList[i].id > task.id) {
+            todoList[i].id -= 1;
+          }
+          i += 1;
+        }
+        save();
+        window.location.reload();
+      }
+    });
+  }
 };
 
 newList.addEventListener('submit', (e) => {
