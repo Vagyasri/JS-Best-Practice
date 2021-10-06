@@ -14,7 +14,7 @@ In this project, I have implemented the CRUD (create, update, delete) methods. A
 
 ## Live Demo
 
-[Live View!!](https://vagyasri.github.io/JS-Best-Practice/)
+[Live View!!](https://vagyasri.github.io/JS-Best-Practice/dist)
 
 ## Author
 
