@@ -1,7 +1,8 @@
+/* eslint-disable no-loop-func */
 import './style.css';
 
 const LIST_KEY = 'task.list';
-const todoList = JSON.parse(localStorage.getItem(LIST_KEY)) || [];
+let todoList = JSON.parse(localStorage.getItem(LIST_KEY)) || [];
 
 const save = () => {
   localStorage.setItem(LIST_KEY, JSON.stringify(todoList));
@@ -13,13 +14,6 @@ const status = (checkbox, task) => {
   } else {
     task.completed = false;
   }
-};
-
-const removeLocal = (todo) => {
-  const todoIndex = todo.children[0].children[1].value;
-  todoList.splice(todoList.indexOf(todoIndex), 1);
-  save();
-  window.location.reload();
 };
 
 const container = document.querySelector('.list-container');
@@ -71,6 +65,7 @@ const render = () => {
     icon.classList.add('show-more');
     dlt.classList.add('fas');
     dlt.classList.add('fa-trash-alt');
+    dlt.setAttribute('data-index', todo.index);
 
     listElement.appendChild(input);
     listElement.appendChild(span);
@@ -103,13 +98,17 @@ const createList = (task) => (
     completed: false,
   });
 
+const removeLocal = (index) => {
+  todoList = todoList.filter((task) => task.index !== index);
+  save();
+  window.location.reload();
+};
+
 const deleteList = (e) => {
   const deleteButton = e.target;
   if (deleteButton.classList[1] === 'fa-trash-alt') {
-    const itemToDelete = deleteButton.parentElement.parentElement;
-    removeLocal(itemToDelete);
-    itemToDelete.remove();
-    save();
+    const indexToDelete = Number(deleteButton.getAttribute('data-index'));
+    removeLocal(indexToDelete);
   }
 };
 
